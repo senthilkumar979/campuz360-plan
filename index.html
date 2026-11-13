@@ -74,7 +74,7 @@ footer{background:var(--ink);color:#9fb0cc;padding:34px 0;font-size:14px}footer 
 .kr{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px 24px;margin-bottom:22px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}.chips a{font-size:13px;font-weight:600;padding:6px 14px;border-radius:99px;border:1.5px solid var(--line);cursor:pointer;color:var(--mut);background:#fff}.chips a:hover{border-color:var(--m);color:var(--ink)}
 .rg p{margin:8px 0 4px}.dod ul{margin:14px 0 0}.cl p{margin:6px 0 0;color:#33435f;font-size:14.5px}
-</style></head><body>
+.stabs{display:flex;gap:8px;overflow-x:auto;padding:0 0 10px;margin-bottom:18px;border-bottom:2px solid var(--line)}.stab{border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:8px 16px;font:600 14px 'Plus Jakarta Sans',system-ui,sans-serif;color:var(--mut);cursor:pointer;white-space:nowrap}.stab:hover{border-color:var(--m);color:var(--ink)}.stab.on{background:var(--m);border-color:var(--m);color:#fff}</style></head><body>
 <svg width="0" height="0" style="position:absolute"><symbol id="logo" viewBox="0 0 64 64"><path d="M46 12A24 24 0 1 0 46 52" fill="none" stroke="#18a0e8" stroke-width="7"/><path d="M42 18A17 17 0 1 0 42 46" fill="none" stroke="#1e7fd6" stroke-width="6"/><path d="M47 6l9 6-9 6z" fill="#f9a0a8"/><rect x="48" y="44" width="8" height="12" rx="3" fill="#ec4899"/></symbol></svg>
 
 <nav><div class="wrap"><a class="brand" href="#home"><svg width="34" height="34"><use href="#logo"/></svg>Campuz360</a>
@@ -123,14 +123,14 @@ $('dod').innerHTML=sents(D.dod).map(x=>`<li>${esc(x)}</li>`).join('');
 $('cl').innerHTML=D.cl.map(c=>`<div class="card"><h4>${esc(c[0])}</h4><p>${esc(c[1])}</p></div>`).join('');
 $('tabs').innerHTML=M.map(m=>`<button class="tab" role="tab" data-m="${m.id}">${m.e} ${m.n}</button>`).join('');
 const story=(s,o)=>`<details${o?' open':''}><summary>${esc(s.t)}</summary><div class="body"><div class="rg"><span class="badge">${esc(s.role)}</span>${s.goal?`<p>${esc(s.goal)}.</p>`:''}${s.benefit?`<p><b>Benefit:</b> ${esc(s.benefit)}.</p>`:''}</div><h5>Acceptance criteria</h5>${ul(s.ac)}</div></details>`;
-function show(id){const m=M.find(x=>x.id==id);
+function show(id,fi=0){const m=M.find(x=>x.id==id);
 document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.m==id));
 $('panel').style.setProperty('--m',m.c);
 $('panel').innerHTML=`<div class="mhead" style="--m:${m.c}"><div class="ico">${m.e}</div><div><h3 style="font-size:26px">${esc(m.t)}</h3><p>${esc(m.d)}</p></div></div>
 ${m.kr.length?`<div class="kr"><h5>Key responsibilities</h5>${ul(m.kr)}</div>`:''}
-<div class="chips">${m.f.map((f,i)=>`<a data-f="f-${m.id}-${i}">${esc(cn(f))}</a>`).join('')}</div>
-${m.f.map((f,i)=>{const t=tg(f);return `<article class="fcard" id="f-${m.id}-${i}" style="--m:${m.c}"><div class="fh"><h3>${esc(cn(f))}</h3>${t?`<span class="badge ${t[1]}">${t[0]}</span>`:''}<span class="badge">${f.s.length} stories</span></div><p class="fd">${esc(f.d)}</p>${f.ac?`<div class="ac"><h5>Acceptance criteria</h5>${ul(sents(f.ac))}</div>`:''}${f.s.length?`<h4 class="sub">User stories</h4>${f.s.map((s,k)=>story(s,!i&&!k)).join('')}`:''}</article>`}).join('')}`}
-document.addEventListener('click',e=>{const c=e.target.closest('[data-f]');if(c){$(c.dataset.f).scrollIntoView({behavior:'smooth'});return}const t=e.target.closest('[data-m]');if(!t)return;show(t.dataset.m);if(!t.classList.contains('tab'))$('stories').scrollIntoView()});
+<div class="stabs" role="tablist">${m.f.map((f,i)=>`<button class="stab${i==fi?' on':''}" role="tab" data-m="${m.id}" data-fi="${i}">${esc(cn(f))}</button>`).join('')}</div>
+${[m.f[fi]].map(f=>{const i=fi,t=tg(f);return `<article class="fcard" id="f-${m.id}-${i}" style="--m:${m.c}"><div class="fh"><h3>${esc(cn(f))}</h3>${t?`<span class="badge ${t[1]}">${t[0]}</span>`:''}<span class="badge">${f.s.length} stories</span></div><p class="fd">${esc(f.d)}</p>${f.ac?`<div class="ac"><h5>Acceptance criteria</h5>${ul(sents(f.ac))}</div>`:''}${f.s.length?`<h4 class="sub">User stories</h4>${f.s.map((s,k)=>story(s,!i&&!k)).join('')}`:''}</article>`}).join('')}`}
+document.addEventListener('click',e=>{const c=e.target.closest('[data-fi]');if(c){show(c.dataset.m,+c.dataset.fi);return}const t=e.target.closest('[data-m]');if(!t)return;show(t.dataset.m);if(!t.classList.contains('tab'))$('stories').scrollIntoView()});
 document.addEventListener('keydown',e=>{if(e.key=='Enter'&&e.target.classList.contains('mcard'))e.target.click()});
 show('shell');
 </script></body></html>
